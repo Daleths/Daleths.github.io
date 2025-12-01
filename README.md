@@ -46,7 +46,7 @@ A static blog template built with [Astro](https://astro.build).
 2. To edit your blog locally, clone your repository, run `pnpm install` to install dependencies.
     - Install [pnpm](https://pnpm.io) `npm install -g pnpm` if you haven't.
 3. Edit the config file `src/config.ts` to customize your blog.
-4. Run `pnpm new-post <filename>` to create a new post and edit it in `src/content/posts/`.
+4. Run `pnpm new-post <filename>` to create a new post and edit it in `src/content/MyPosts/`.
 5. Deploy your blog to Vercel, Netlify, GitHub Pages, etc. following [the guides](https://docs.astro.build/en/guides/deploy/). You need to edit the site configuration in `astro.config.mjs` before deployment.
 
 ## 📝 Frontmatter of Posts
