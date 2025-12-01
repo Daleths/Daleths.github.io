@@ -40,10 +40,10 @@ draft: false
 
 
 
-Your post files should be placed in `src/content/MyPosts/` directory. You can also create sub-directories to better organize your posts and assets.
+Your post files should be placed in `src/content/posts/` directory. You can also create sub-directories to better organize your posts and assets.
 
 ```
-src/content/MyPosts/
+src/content/posts/
 ├── post-1.md
 └── post-2/
     ├── cover.png

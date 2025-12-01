@@ -32,7 +32,7 @@
 2. 로컬에서 블로그를 수정하려면, 저장소를 복제하고 `pnpm install`을 실행하여 종속성을 설치하세요.
    - [pnpm](https://pnpm.io)이 설치되어 있지 않다면 `npm install -g pnpm`을 실행하여 설치하세요.
 3. `src/config.ts`설정 파일을 수정하여 블로그를 커스터마이징하세요.
-4. `pnpm new-post <filename>`을 실행하여 새 게시물을 만들고 `src/content/MyPosts/`에서 수정하세요.
+4. `pnpm new-post <filename>`을 실행하여 새 게시물을 만들고 `src/content/posts/`에서 수정하세요.
 5. [가이드](https://docs.astro.build/en/guides/deploy/)에 따라 블로그를 Vercel, Netlify, Github Pages 등에 배포하세요. 배포하기 전에 `astro.config.mjs`에서 사이트 구성을 수정해야 합니다.
 
 ## ⚙️ 게시물의 머리말 설정

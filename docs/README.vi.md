@@ -33,7 +33,7 @@ Một mẫu blog tĩnh được xây bằng [Astro](https://astro.build).
 2. Để chỉnh sửa blog của bạn trên máy cục bộ, hãy clone kho lưu trữ của bạn, chạy lệnh `pnpm install` để cài đặt các phụ thuộc..
     - Cài đặt [pnpm](https://pnpm.io) `npm install -g pnpm` nếu chưa có.
 3. Chỉnh sửa tệp cấu hình `src/config.ts` để tùy chỉnh blog của bạn.
-4. Chạy `pnpm new-post <filename>` để tạo một bài viết mới và chỉnh sửa nó trong `src/content/MyPosts/`.
+4. Chạy `pnpm new-post <filename>` để tạo một bài viết mới và chỉnh sửa nó trong `src/content/posts/`.
 5. Triển khai blog của bạn lên Vercel, Netlify, GitHub Pages, etc. theo [chỉ dẫn](https://docs.astro.build/en/guides/deploy/). Bạn cần chỉnh sửa cấu hình trang web trong `astro.config.mjs` trước khi triển khai.
 
 ## 📝 Tiêu đề đầy đủ của bài viết
