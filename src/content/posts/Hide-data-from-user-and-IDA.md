@@ -9,7 +9,7 @@ draft: false
 
 By default, if you define your data like this:
 
-```C
+```C++ title="data_section.c"
 
 // This data will be stored in .data section
 #include <stdio.h>
@@ -39,7 +39,7 @@ This data will be stored in .data section
 
 You can manually choose the section where the data will be stored by adding some prefix:
 
-```C
+```C++ title="data_in_section.c"
 #include <stdio.h>
 #include <windows.h>
 
