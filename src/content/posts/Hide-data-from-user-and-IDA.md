@@ -9,7 +9,7 @@ draft: false
 
 By default, if you define your data like this:
 
-```C++ title="data_section.c"
+```c title="data_section.c"
 
 // This data will be stored in .data section
 #include <stdio.h>
@@ -39,7 +39,7 @@ This data will be stored in .data section
 
 You can manually choose the section where the data will be stored by adding some prefix:
 
-```C++ title="data_in_section.c"
+```c title="data_in_section.c"
 #include <stdio.h>
 #include <windows.h>
 
@@ -85,3 +85,7 @@ Result:
 Also, ```ResourceHacker``` won't display the data either.
 
 ![alt text](Hide-data-from-user-and-IDA/4_ResourceHacker.png)
+
+
+
+# -> You can store your shellcode in resource section, and the default IDA will not display this data.
