@@ -3,7 +3,7 @@ title: Hide data from user and IDA
 published: 2025-12-09
 tags: [Markdown, Anti-Analysis, Malware]
 category: Anti-Analysis
-draft: true
+draft: false
 ---
 
 
