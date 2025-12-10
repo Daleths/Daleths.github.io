@@ -1,7 +1,7 @@
 ---
 title: Self-sign
 published: 2025-12-09
-tags: [Markdown, AntiVirus-Evasion, Malware]
+tags: [AntiVirus-Evasion, Malware]
 category: AntiVirus-Evasion
 draft: false
 ---

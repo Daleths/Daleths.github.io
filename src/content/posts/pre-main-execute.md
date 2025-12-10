@@ -1,7 +1,7 @@
 ---
 title: Pre-main Execution
 published: 2025-12-09
-tags: [Markdown, Anti-Analysis, Malware]
+tags: [Anti-Analysis, Malware]
 category: Anti-Analysis
 draft: false
 ---
