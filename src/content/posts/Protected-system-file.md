@@ -1,7 +1,7 @@
 ---
 title: Protected System Files
 published: 2025-12-10
-tags: [AntiVirus-Evasion, Malware]
+tags: [Markdown, AntiVirus-Evasion, Malware]
 category: AntiVirus-Evasion
 draft: false
 ---
