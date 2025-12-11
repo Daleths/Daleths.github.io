@@ -31,7 +31,6 @@ struct _EXCEPTION_REGISTRATION
 
 We can get the address of SEH by accessing the Threat Information Block
 
-See more: https://en.wikipedia.org/wiki/Win32_Thread_Information_Block
 
 |Type|Offset (32-bit FS)|Offset (64-bit GS)|Windows Versions|Description|
 |---|---|---|---|---|
@@ -119,3 +118,6 @@ int main(){
 
 // clang ExceptionHandle.c -o ExceptionHandle.exe
 ```
+
+
+Ref: https://en.wikipedia.org/wiki/Win32_Thread_Information_Block
