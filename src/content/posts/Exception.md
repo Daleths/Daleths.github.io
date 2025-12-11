@@ -1,10 +1,10 @@
--------
+---
 title: Ambusing SEH (32-bit)
 published: 2025-12-11
 tags: [Markdown, AntiVirus-Evasion, Anti-Analysis, Malware]
 category: AntiVirus-Evasion
 draft: false
--------
+---
 
 
 You can trigger your payload by creating ```Exception``` in the program:
