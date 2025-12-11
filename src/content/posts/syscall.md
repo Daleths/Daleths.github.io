@@ -122,8 +122,4 @@ int main() {
 // clang src\pure_syscall.c -o binary\pure_syscall.exe
 ```
 
-
-
-
-
-
+REF: https://sec.vnpt.vn/2025/07/Ky-thuat-Direct-syscall-va-Indirect-syscall
