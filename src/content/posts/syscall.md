@@ -8,7 +8,7 @@ draft: false
 
 
 Some EDR vendors use hooking techniques to check for malicious API calls:
-- Injecting EDRVendor.dll into the generated process.
+- Injecting EDRVendor.dll into the target process.
 - Placing an inline hook on a commonly abused API.
 - Inspecting arguments for malicious patterns.
 
