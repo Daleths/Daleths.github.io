@@ -20,7 +20,7 @@ In 32 bit-process, the ```SEH``` record is defined like this
 
 
 
-```
+```c 
 struct _EXCEPTION_REGISTRATION
 {
   DWORD previous_seh_record;
@@ -61,6 +61,10 @@ See more: https://en.wikipedia.org/wiki/Win32_Thread_Information_Block
 
 
 ```c title="SEH.c"
+#include <windows.h>
+#include <winternl.h>
+#include <stdio.h>
+
 #define INSTRUCTION_SIZE 1
 
 void Malware(){
