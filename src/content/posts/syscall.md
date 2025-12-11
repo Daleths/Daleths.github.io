@@ -19,8 +19,8 @@ Some EDR vendors use hooking techniques to check for malicious API calls:
 We can take advantage of this to execute certain APIs without needing to load the corresponding DLL and import that API.
 
 We can replace ```ntdll.dll``` imports. If you are writing shellcode or malware and want to avoid importing functions from ```ntdll.dll``` (to hide from AV/EDR), you can resolve the SSN (Syscall Number) and execute the ```syscall``` instruction directly.
-Supported: File I/O (```NtWriteFile```), Process Creation (```NtCreateUserProcess```), Memory Allocation (```NtAllocateVirtualMemory```).
-Not Supported: GUI (```CreateWindow```), Network wrappers (```URLDownloadToFile```), High-level utilities (```sprintf```).
+<br>Supported: File I/O (```NtWriteFile```), Process Creation (```NtCreateUserProcess```), Memory Allocation (```NtAllocateVirtualMemory```).
+<br>Not Supported: GUI (```CreateWindow```), Network wrappers (```URLDownloadToFile```), High-level utilities (```sprintf```).
 
 
 
