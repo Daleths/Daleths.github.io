@@ -26,7 +26,7 @@ Not Supported: GUI (```CreateWindow```), Network wrappers (```URLDownloadToFile`
 
 (Some APIs are 99% User Mode logic and 1% Kernel. You cannot replace these with a syscall.
 <br>
-```MessageBox```: There is no ```MessageBox``` ```syscall". When you call ```MessageBox```, ```user32.dll``` calculates window size, draws borders, loads fonts, and handles the message loop. It makes dozens of different ```syscall``` (to ```win32u.dll```) just to draw one box. You cannot replicate this with a single ```syscall```.
+```MessageBox```: There is no ```MessageBox syscall```. When you call ```MessageBox```, ```user32.dll``` calculates window size, draws borders, loads fonts, and handles the message loop. It makes dozens of different ```syscall``` (to ```win32u.dll```) just to draw one box. You cannot replicate this with a single ```syscall```.
 
 <br>```LoadLibrary```: This function manually reads a file from disk, parses the PE headers, maps sections to memory, and fixes relocations. This is complex logic running in your process, not a single kernel service.)
 
