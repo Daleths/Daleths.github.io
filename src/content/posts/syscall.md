@@ -40,7 +40,7 @@ syscall
 ret                          
 ```
 
-We can implement out own ```NtWriteFile``` without calling to the API:
+We can implement our own ```NtWriteFile``` without calling to the API:
 
 ```c title="pure_syscall.c"
 #include <windows.h>
