@@ -35,7 +35,7 @@ For example, ```WriteFileA``` API (kernel32) will call ```NtWriteFile``` (ntdll)
 ```asm
 mov r10,rcx                  
 mov eax,8                    
-[SOME TESTING INSTRUCTION]   ;does not really importain
+[SOME TESTING INSTRUCTION]   ;does not really important
 syscall                      
 ret                          
 ```
