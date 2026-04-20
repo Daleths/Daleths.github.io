@@ -1,5 +1,7 @@
 #include "manual_loader.h"
 
+// ORIGINAL AUTHOR: https://github.com/adamhlt/Manual-DLL-Loader/blob/main/Source/Manual%20Loader/Loader.cpp
+
 /**
  *	Function to retrieve the PE file content.
  *	\param lpFilePath : path of the PE file.
