@@ -1,7 +1,7 @@
 ---
 title: Manual mapping
 published: 2026-04-20
-tags: [Markdown, AntiVirus-Evasion, Malware]
+tags: [Markdown, AntiVirus-Evasion, Anti-Analysis, Malware]
 category: AntiVirus-Evasion
 draft: false
 ---
@@ -21,6 +21,7 @@ Why?
 - Can be injected via remote thread → Full stealth injection
 
 ```c title="ManualMap.c"
+
 // Original source: redteamleaders.com
 #include <Windows.h>
 #include <iostream>

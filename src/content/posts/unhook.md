@@ -11,6 +11,7 @@ Some EDR vendors inject their hook inside processes's modules, like injecting th
 To bypass this, we can try to list all modules that are loaded inside the process; they proceed to restore the module's original code.
 
 ```c title="Unhook.c"
+
 // Original source: redteamleaders.com
 #include <windows.h>
 #include <winnt.h>
