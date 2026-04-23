@@ -1,6 +1,6 @@
 ---
 title: Dynamic API Resolution
-published: 2025-12-11
+published: 2026-04-23
 tags: [Markdown, AntiVirus-Evasion, Anti-Analysis, Malware, Shellcode]
 category: AntiVirus-Evasion
 draft: false
