@@ -206,3 +206,11 @@ int main() {
     }
 }
 ```
+
+
+Bypassing Userland Hooks:
+# Option 1: Syscalls
+Avoid using high-level Windows APIs; instead use native syscalls.
+
+# Option 2: Manual Mapping of DLLs
+Load a clean copy of a DLL from disk and resolve API addresses yourself.
