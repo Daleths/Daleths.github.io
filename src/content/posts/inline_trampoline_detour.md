@@ -1,7 +1,7 @@
 ---
-title: Hook comparition: inline - trampoline - detour 
+title: inline - trampoline - detour hook 
 published: 2026-06-01
-tags: [Markdown, reverse engineering]
+tags: [Markdown, reverse-engineering]
 category: Software-hacking
 draft: false
 ---
