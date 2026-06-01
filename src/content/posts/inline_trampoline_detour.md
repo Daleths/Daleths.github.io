@@ -56,13 +56,13 @@ Trampoline:
 
 Ex:
 Suppose these bytes were overwritten:
-```
+```asm
 push rbp
 mov rbp, rsp
 sub rsp, 20h
 ```
 The trampoline contains:
-```
+```asm
 push rbp
 mov rbp, rsp
 sub rsp, 20h
