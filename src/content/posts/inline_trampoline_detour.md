@@ -2,7 +2,7 @@
 title: Hook comparition: inline - trampoline - detour 
 published: 2026-06-01
 tags: [Markdown, reverse engineering]
-category: Software hacking
+category: Software-hacking
 draft: false
 ---
 

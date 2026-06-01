@@ -81,7 +81,7 @@ This allows detection logic such as:
 Internal flow
 
 Very simplified flow:
-```C
+```c
 CreateProcess()
   ->
 NtCreateUserProcess()
