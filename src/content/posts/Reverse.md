@@ -1282,6 +1282,9 @@ Below is the mapping of tactics and techniques observed in the malware's lifecyc
 
 REF:
 https://tech-zealots.com/malware-analysis/understanding-concepts-of-va-rva-and-offset/
+
 https://github.com/am0nsec/HellsGate/
+
 https://github.com/xaitax/Chrome-App-Bound-Encryption-Decryption
+
 https://github.com/Maktm/FLIRTDB
