@@ -38,7 +38,7 @@ Victim: chernigivdonor@ukr[.]net
 Once the unsuspecting victim enters the provided password and attempts to extract the archive, the WinRAR [CVE-2025-8088](https://nvd.nist.gov/vuln/detail/CVE-2025-8088) vulnerability is triggered. This exploit utilizes malicious NTFS file streams to establish an ambush, quietly executing the initial shellcode on the host machine.
 
 
-Inside the password-protected archive, the attacker delivered two Winrar-exploited archive, they comes with the same payload, just different decoy pdf.
+Inside the password-protected archive, the attacker delivered two WinRAR-exploited archives, each with the same payload, just different decoy pdf.
 
 ![alt text](img/Password_protected_archive.png)
 
@@ -371,12 +371,12 @@ This PowerShell script acts as a highly stealthy, fileless loader designed to de
 - **Custom Payload Decryption**: The loader targets the previously staged file located at ```C:\ProgramData\I54d```. It reads the entire 0x113e00-byte file into an array and decrypts it byte-by-byte. The decryption routine is a straightforward arithmetic operation that subtracts a hardcoded key of 75 from each byte and applies a modulo 256 operation to wrap the values.
 - **Direct System Calls (Self-Injection)***: The script executes the payload within its own PowerShell process space. It uses the ```NtAllocateVirtualMemory``` system call to carve out memory. After copying the decrypted payload into this allocated space, it calls ```NtProtectVirtualMemory``` with a protection constant of 64 (representing ```PAGE_EXECUTE_READWRITE```). Finally, it detonates the payload using ```NtCreateThreadEx```, pointing the thread's execution directly to the payload's entry point at offset 0x17710.
 - **Error Telemetry and C2 Callback**: The loader actively monitors the execution thread by calling ```NtWaitForSingleObject``` and retrieves the result with ```GetExitCodeThread```. If the payload fails (indicated by a non-zero exit code), the script disables SSL certificate validation and executes a POST request to a hardcoded command and control (C2) server at [https[:]//136[.]0[.]141[.]237:8942/seqOhyMc/]
-- Upon analyzing the shellcode, we know that the there offset are Error code, Execution result, and payload stage
+- Upon analyzing the shellcode, we know that these three offsets are Error code, Execution result, and payload stage
 ![alt text](img/Special_offset_ps1.png)
 
 
 ## 3.3. The final C:\ProgramData\I54d payload
-Base on the upper deobfuscated script:
+Based on the upper deobfuscated script:
 
 Filename: C:\ProgramData\I54d
 Size: 0x113e00
@@ -478,7 +478,7 @@ List of APIs be resolved this way:
 18. NtWriteVirtualMemory
 ```
 
-Base on the result, and error handling from the EntryPoint
+Based on the result, and error handling from the EntryPoint
 
 ![alt text](img/error_handling.png)
 
@@ -533,7 +533,7 @@ Back to the powershell script:
 
 - First, we need to understand the function the malware use to convert raw offset to image RVA
 ![alt text](img/Offset2RVA.png)
-Please read [this blog](https://tech-zealots.com/malware-analysis/understanding-concepts-of-va-rva-and-offset/) for the full analysis
+Further reading [this blog](https://tech-zealots.com/malware-analysis/understanding-concepts-of-va-rva-and-offset/) for the full analysis
 
 ```C
 Given a raw file offset
@@ -677,13 +677,14 @@ PointerToRawData: 0x112E00
 | `.reloc`   | `0x119000` | `0x11A000` |       `0x112E00` |     `0x113E00` |
 
 
-Remember how we caculate DLLMain address (belong in .text section)
+Remember how we calculate DLLMain address (belong in .text section)
 ```
 MappedDllMainAddress = PointerToRawData + (RVA - VirtualAddress)
           = 0x400 + (0x8F834 - 0x1000)
           = 0x8EC34
 ```
 
+The .text section has a shift of +0xC00. Each section has its own independent shift, derived from VirtualAddress - PointerToRawData. The RC4 string extraction example falls in .rdata, so the relevant shift there is +0x800, leading to RawOffset = RVA - 0x800.
 ***-> The allocated code itself has been relocated by +0xC00.***
 | Section  |       VA |    RVA End |      Raw | Shift (VA - Raw) |
 | -------- | -------: | ---------: | -------: | ---------------: |
@@ -693,7 +694,6 @@ MappedDllMainAddress = PointerToRawData + (RVA - VirtualAddress)
 | .pdata   | 0x10F000 | 0x117200 | 0x10AA00 |       **0x3a00** |
 | .fptable | 0x118000 | 0x118200 | 0x112C00 |       **0x4800** |
 | .reloc   | 0x119000 | 0x11A000 | 0x112E00 |       **0x5600** |
-
 
 ![alt text](img/exRc4.png)
 
@@ -710,7 +710,7 @@ So in our extraction script, we need to subtract 0x800 from the source address t
 
 ![alt text](img/decryption_result.png)
 
-## 3.3.5. Communicate with C2
+## 3.3.6. Communicate with C2
 
 
 The supplied payload is first copied into a newly allocated buffer, after which a 10-byte packet trailer is appended. A 2-byte packet type, and a 4-byte packet identifier, allowing the server to distinguish packet boundaries and message types.
@@ -756,28 +756,28 @@ enum MW_C2_CODE : unsigned __int64
 ![alt text](img/C2_communication_3.png)
 
 
-## 3.3.6. Stealer
+## 3.3.7. Stealer
 
-First the malware generate some paths base on enviroment string
+First the malware generate some paths Based on environment string
 
 ![alt text](img/Path_generation.png)
 
 | PATH                                                        | Purpose                               |
 |-------------------------------------------------------------|---------------------------------------|
-| C:\User\[Username]\bZsaxmZvial0zhH4n                        | Root directory for stolen data        |
-| C:\User\[Username]\tKyvEZBrnNtrVhA.zip                      | Zip file name for stolen data archive |
-| C:\User\[Username]\bZsaxmZvial0zhH4n\\[Username]             | Root directory for logging files      |
+| C:\Users\[Username]\bZsaxmZvial0zhH4n                        | Root directory for stolen data        |
+| C:\Users\[Username]\tKyvEZBrnNtrVhA.zip                      | Zip file name for stolen data archive |
+| C:\Users\[Username]\bZsaxmZvial0zhH4n\\[Username]             | Root directory for logging files      |
 | C:\Users\[Username]\AppData\Local\Temp\B1WTZSa_qAz4yTQGVg6i | Batch script for self removal         |
-| C:\User\[Username]\bZsaxmZvial0zhH4n\\[Username]\jMT7f1YMTwe | Error log file                        |
+| C:\Users\[Username]\bZsaxmZvial0zhH4n\\[Username]\jMT7f1YMTwe | Error log file                        |
 | C:\Users\[Username]\AppData\Local\Temp\logs.txt             | Log file for all action               |
 
-### 3.3.6.1. Browser's data stealer
+### 3.3.7.1. Browser's data stealer
 
 Target browser: Firefox, Opera, Edge, Chrome
 
 ![alt text](img/decrypted_browser_info_string.png)
 
-#### 3.3.6.1.1. Firefox
+#### 3.3.7.1.1. Firefox
 **Firefox**: The malware discover every Firefox user profile and preparing each profile for credential extraction. 
 
 ```
@@ -816,7 +816,7 @@ Proceed to next profile
 
 ![alt text](img/FirefoxSqlite.png)
 
-#### 3.3.6.1.2. Chrome, Edge and Opera
+#### 3.3.7.1.2. Chrome, Edge and Opera
 
 The Chromium-base credential theft routine is divided into multiple stages that collectively recover the browser's AES master key and prepare profile-specific information for extracting encrypted browser credentials. 
 Rather than immediately reading the browser databases, the malware first processes the Local State configuration file to obtain the DPAPI-protected master key and enumerate the available browser profiles. 
@@ -1071,7 +1071,7 @@ While the destination directory is created inside the malware's working folder:
 ```
 <Malware Working Folder>\<ProfileName>, which is C:\User\[Username]\bZsaxmZvial0zhH4n\<ProfileName>
 ```
-#### 3.3.6.1.4. Collected data
+#### 3.3.7.1.4. Collected data
 
 The first artifact collected from each profile is the Chromium ```Login Data``` SQLite database.
 ![alt text](img/LoginData.png)
@@ -1101,7 +1101,7 @@ Consequently, the malware never stores plaintext browser artifacts in its workin
 
 
 
-### 3.3.6.2. Local files slealer
+### 3.3.7.2. Local files stealer
 
 
 The local file stealer is implemented as a standalone module whose purpose is to locate user documents on all accessible drives, copy them into a staging directory while encrypting them, periodically compress the staged data, and transmit the archive to the C2 server.
@@ -1174,7 +1174,7 @@ A file is stolen only if all conditions are satisfied.
 
 
 
-### 3.3.6.3. Compression of stealed data
+### 3.3.7.3. Compression of stolen data
 
 
 Exfiltration using ZIP archive containing the files previously collected by the stealer. The malware initializes a ZIP writer, recursively traverses the target directory, adds every discovered file into the archive while preserving the original directory hierarchy, finalizes the ZIP central directory, and prepares the archive for transmission to the command-and-control (C2) server.
@@ -1278,3 +1278,10 @@ Below is the mapping of tactics and techniques observed in the malware's lifecyc
 | **Command & Control**| T1071.001 | Web Protocols | C2 communication via HTTPS POST requests to dynamic endpoints (`/G8mGR7vXmD/`, `/seqOhyMc/`). |
 | | T1573.001 | Symmetric Cryptography | RC4 encryption applied to the payload data and exfiltration network packets. |
 | **Exfiltration** | T1041 | Exfiltration Over C2 Channel | Transmission of the compressed ZIP archive containing stolen data back to the C2 server. |
+
+
+REF:
+https://tech-zealots.com/malware-analysis/understanding-concepts-of-va-rva-and-offset/
+https://github.com/am0nsec/HellsGate/
+https://github.com/xaitax/Chrome-App-Bound-Encryption-Decryption
+https://github.com/Maktm/FLIRTDB
