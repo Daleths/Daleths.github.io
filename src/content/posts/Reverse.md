@@ -6,6 +6,7 @@ category: Malware-analysis
 draft: false
 ---
 
+![alt text](img/BANNER.png)
 
 # Beyond the Archive: CVE-2025-8088 Stealer Targeting Ukraine
 
