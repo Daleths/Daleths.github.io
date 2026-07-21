@@ -11,9 +11,13 @@ draft: false
 # Beyond the Archive: CVE-2025-8088 Stealer Targeting Ukraine
 
 # 0. Overview
-This report details a targeted phishing campaign delivering an information stealer against Ukrainian entities. The malware is distributed via a password-protected RAR archive impersonating the Holosiivskyi District TCC, exploiting WinRAR CVE-2025-8088 (NTFS ADS path traversal) to silently drop payloads to C:\ProgramData and establish persistence via a Startup folder .lnk file, all without user-visible execution.
+This report details a targeted cyber-espionage campaign conducted by the Russia-aligned threat actor group **APT SHADOW-EARTH-066** (also tracked by CERT-UA as **UAC-0226**), delivering an updated variant of the **GIFTEDCROOK** information stealer against Ukrainian military and government entities. As documented in threat intelligence research published by [Trend Micro](https://www.trendmicro.com/en_us/research/26/f/old-winrar-flaw-fuels-attacks-on-ukraine.html), this campaign weaponizes a known path traversal flaw in WinRAR ([CVE-2025-8088](https://nvd.nist.gov/vuln/detail/CVE-2025-8088)) to compromise unmanaged endpoints.
 
-Once triggered, an obfuscated PowerShell loader decrypts and reflectively loads a shellcode payload using direct/indirect syscalls (Hell's Gate-style) and FNV-1a API hashing to evade EDR hooks. The final-stage stealer harvests browser credentials, cookies, and session data (Chrome, Edge, Opera, Firefox), along with documents, archives, and credential files (KeePass, OpenVPN, JKS) matching size/age/extension criteria. Stolen data is RC4-encrypted, staged, compressed into a ZIP archive, and exfiltrated over HTTPS to a hardcoded C2 server, with a self-cleanup routine erasing artifacts post-execution.
+The malware is distributed via password-protected RAR archives sent through spear-phishing emails impersonating official communications from the Holosiivskyi District Territorial Center for Recruitment and Social Support (TCC and SP). By exploiting WinRAR's NTFS Alternate Data Stream (ADS) path traversal vulnerability, the archive silently writes payload files into `C:\ProgramData` and drops a shortcut (`.lnk`) file into the Windows Startup folder to achieve persistence, all without user-visible extraction or execution alerts.
+
+Upon system login or execution, an obfuscated PowerShell loader decrypts and reflectively loads a shellcode payload utilizing direct/indirect syscalls (Hell's Gate technique) and FNV-1a API hashing to evade EDR hooks. The final-stage **GIFTEDCROOK** stealer systematically harvests browser credentials, cookies, and session data (Chrome, Edge, Opera, Firefox), along with sensitive documents, archives, and credential stores (KeePass, OpenVPN, JKS). Stolen telemetry and files are RC4-encrypted, packaged into a ZIP archive, and exfiltrated over HTTPS to dedicated threat actor Command and Control (C2) infrastructure, followed by an automated self-cleanup routine erasing forensic artifacts post-execution.
+
+
 
 ![alt text](img/Graph.jpg)
 
@@ -37,6 +41,15 @@ Victim: chernigivdonor@ukr[.]net
 
 Once the unsuspecting victim enters the provided password and attempts to extract the archive, the WinRAR [CVE-2025-8088](https://nvd.nist.gov/vuln/detail/CVE-2025-8088) vulnerability is triggered. This exploit utilizes malicious NTFS file streams to establish an ambush, quietly executing the initial shellcode on the host machine.
 
+### Vulnerability Overview
+| Property | Details |
+| :--- | :--- |
+| **CVE Identifier** | [CVE-2025-8088](https://nvd.nist.gov/vuln/detail/CVE-2025-8088) |
+| **Vulnerability Type** | Path Traversal via NTFS Alternate Data Streams (ADS) |
+| **Severity** | High (CVSS v3.1 8.4) |
+| **Affected Versions** | WinRAR **< 7.13** (WinRAR 7.12 and all earlier versions) |
+| **Fixed Version** | WinRAR **7.13** (and all subsequent releases) |
+| **Patch Release Date** | July 2025 |
 
 Inside the password-protected archive, the attacker delivered two WinRAR-exploited archives, each with the same payload, just different decoy pdf.
 
@@ -417,6 +430,8 @@ Therefore, if you want to debug this shellcode, you would need something like th
         WaitForSingleObject(hThread, INFINITE);
 ```
 
+
+At address 0x17710, we can see the entry point of the shellcode, as shown below.
 ![alt text](img/Malware_initial_entry.png)
 
 
@@ -533,6 +548,7 @@ Back to the powershell script:
 
 - First, we need to understand the function the malware use to convert raw offset to image RVA
 ![alt text](img/Offset2RVA.png)
+
 Further reading [this blog](https://tech-zealots.com/malware-analysis/understanding-concepts-of-va-rva-and-offset/) for the full analysis
 
 ```C
@@ -684,8 +700,34 @@ MappedDllMainAddress = PointerToRawData + (RVA - VirtualAddress)
           = 0x8EC34
 ```
 
-The .text section has a shift of +0xC00. Each section has its own independent shift, derived from VirtualAddress - PointerToRawData. The RC4 string extraction example falls in .rdata, so the relevant shift there is +0x800, leading to RawOffset = RVA - 0x800.
-***-> The allocated code itself has been relocated by +0xC00.***
+The analyzed shellcode embeds a PE DLL without the standard DOS and NT headers. Instead, the shellcode contains a custom context structure followed by a manually constructed section table describing the embedded image. During execution, the shellcode manually maps each section into memory using the section metadata stored in this table.
+
+The section copy routine performs a direct copy from the embedded DLL into the allocated image:
+
+![alt text](img/caculate_section.png)
+
+Consequently, all operands referenced by the DLL code are RVAs, while the static analysis is performed directly on the raw embedded shellcode. Therefore, every RVA must first be translated into its corresponding raw offset before the referenced data can be located correctly.
+
+For a normal PE image, the conversion is:
+```
+RawOffset = PointerToRawData + (RVA − VirtualAddress)
+```
+However, this malware stores the embedded DLL in a modified layout. Besides removing the PE headers, the embedded image is logically rebased so that the beginning of the .text section becomes the logical origin of the image. As a result, every RVA-to-Raw conversion requires an additional correction equal to the .text section shift:
+```
+ImageBias= VA(.text) ​− Raw(.text)​
+```
+For this sample:
+```
+VirtualAddress = 0x1000
+PointerToRawData = 0x400
+
+ImageBias = 0x1000 - 0x400 = 0xC00
+```
+Therefore, the correct conversion used during static analysis becomes:
+```
+RawOffset = PointerToRawData + ( RVA − VirtualAddress) + ImageBias
+```
+
 | Section  |       VA |    RVA End |      Raw | Shift (VA - Raw) |
 | -------- | -------: | ---------: | -------: | ---------------: |
 | .text    |   0x1000 | 0xB0800 |    0x400 |        **0xC00** |
@@ -1281,6 +1323,7 @@ Below is the mapping of tactics and techniques observed in the malware's lifecyc
 
 
 REF:
+
 https://tech-zealots.com/malware-analysis/understanding-concepts-of-va-rva-and-offset/
 
 https://github.com/am0nsec/HellsGate/
@@ -1288,3 +1331,7 @@ https://github.com/am0nsec/HellsGate/
 https://github.com/xaitax/Chrome-App-Bound-Encryption-Decryption
 
 https://github.com/Maktm/FLIRTDB
+
+https://www.trendmicro.com/en_us/research/26/f/old-winrar-flaw-fuels-attacks-on-ukraine.html
+
+https://nvd.nist.gov/vuln/detail/CVE-2025-8088
