@@ -3,7 +3,7 @@ title: CVE-2025-8088 Stealer Targeting Ukraine
 published: 2026-07-20
 tags: [Markdown, Reverse-engineering, Malware, Shellcode, Stealer, Malware-analysis]
 category: Malware-analysis
-draft: false
+draft: true
 ---
 
 ![alt text](img/BANNER.png)
@@ -725,7 +725,7 @@ ImageBias = 0x1000 - 0x400 = 0xC00
 ```
 Therefore, the correct conversion used during static analysis becomes:
 ```
-RawOffset = PointerToRawData + ( RVA − VirtualAddress) + ImageBias
+RawOffset = PointerToRawData + ( RVA − VirtualAddress) - ImageBias
 ```
 
 | Section  |       VA |    RVA End |      Raw | Shift (VA - Raw) |
@@ -1249,6 +1249,7 @@ Prepare archive for C2 transfer
 ```
 
 ![alt text](img/CompressionStruct.png)
+
 
 # 4. IOC
 
